@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using VagasApi.Data;
 using VagasApi.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -38,7 +40,7 @@ app.MapGet("/v1/vagas/{id}", (string id, AppDbContext context) =>
 {
     if (Guid.TryParse(id, out Guid idVaga))
     {
-        var vaga = context?.Vagas?.FirstOrDefault(v => v.Id == Guid.Parse(id));
+        var vaga = context?.Vagas?.FirstOrDefault(v => v.Id == id);
         return vaga is not null ? Results.Ok(vaga) : Results.NotFound();
     }
     return Results.NotFound();
@@ -66,11 +68,11 @@ app.MapPut("/v1/vagas", (AppDbContext context, AlterVagaViewModel model) =>
         return Results.BadRequest(model.Notifications);
     }
 
-    var vaga = context?.Vagas?.FirstOrDefault(v => v.Id == model.Id);
+    var vaga = context?.Vagas?.FirstOrDefault(v => v.Id == model.Id.ToString());
 
     if (vaga is not null)
     {
-        vaga.IdEstacionamento = model.IdEstacionamento;
+        vaga.IdEstacionamento = model.IdEstacionamento.ToString();
         vaga.Status = model.Status;
         vaga.TipoVaga = model.TipoVaga;
         vaga.ValorHora = model.ValorHora;
@@ -86,7 +88,7 @@ app.MapDelete("/v1/vagas/{id}", (string id, AppDbContext context) =>
 {
     if (Guid.TryParse(id, out Guid idVaga))
     {
-        var vaga = context?.Vagas?.FirstOrDefault(v => v.Id == idVaga);
+        var vaga = context?.Vagas?.FirstOrDefault(v => v.Id == idVaga.ToString());
         if (vaga is not null)
         {
             context?.Remove(vaga);

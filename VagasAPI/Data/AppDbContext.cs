@@ -6,7 +6,6 @@ namespace VagasApi.Data
     {
         public DbSet<Vaga>? Vagas { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("DataSource=Vagas.db;Cache=Shared");
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     }
 }

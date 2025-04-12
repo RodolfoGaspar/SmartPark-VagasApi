@@ -8,7 +8,7 @@ namespace VagasApi.ViewModels
         public Guid IdEstacionamento { get; set; }
         public StatusVagaEnum Status { get; set; }
         public TipoVagaEnum TipoVaga { get; set; }
-        public decimal ValorHora { get; set; }
+        public double ValorHora { get; set; }
 
         public Vaga MapTo()
         {

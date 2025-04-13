@@ -5,7 +5,11 @@ using VagasApi.ViewModels;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")
+                        .Replace("{Postgres:Host}", builder.Configuration["Postgres:Host"])
+                        .Replace("{Postgres:Username}", builder.Configuration["Postgres:Username"])
+                        .Replace("{Postgres:Password}", builder.Configuration["Postgres:Password"])));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
